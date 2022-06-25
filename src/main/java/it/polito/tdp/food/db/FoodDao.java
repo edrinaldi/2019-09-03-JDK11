@@ -114,7 +114,7 @@ public class FoodDao {
 	public List<String> getVertici(int calorie){
 		String sql = "select distinct portion_display_name "
 				+ "from portion "
-				+ "where calories>?" ;
+				+ "where calories<?" ;
 		try {
 			Connection conn = DBConnect.getConnection() ;
 

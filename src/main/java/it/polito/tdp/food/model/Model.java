@@ -1,5 +1,8 @@
 package it.polito.tdp.food.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultWeightedEdge;
@@ -32,6 +35,19 @@ public class Model {
 		// console
 		System.out.printf("# vertici: %d\n", this.grafo.vertexSet().size());
 		System.out.printf("# archi: %d", this.grafo.edgeSet().size());
-
+	}
+	
+	public List<PorzioneConnessa> trovaPorzioniConnesse(String partenza) {
+		List<PorzioneConnessa> connessi = new ArrayList<>();
+		for(DefaultWeightedEdge e : this.grafo.edgesOf(partenza)) {
+			String tipoPorzione = Graphs.getOppositeVertex(this.grafo, e, partenza);
+			int peso = (int)this.grafo.getEdgeWeight(e);
+			connessi.add(new PorzioneConnessa(tipoPorzione, peso));
+		}
+		
+		// console
+		System.out.print(connessi);
+		
+		return connessi;
 	}
 }
