@@ -14,6 +14,8 @@ import it.polito.tdp.food.db.FoodDao;
 public class Model {
 	private Graph<String, DefaultWeightedEdge> grafo;
 	private FoodDao dao;
+	private List<PorzioneConnessa> camminoOttimo;
+	private int pesoCammino;
 	
 	public Model() {
 		this.dao = new FoodDao();
@@ -35,7 +37,7 @@ public class Model {
 		
 		// console
 		System.out.printf("# vertici: %d\n", this.grafo.vertexSet().size());
-		System.out.printf("# archi: %d", this.grafo.edgeSet().size());
+		System.out.printf("# archi: %d\n", this.grafo.edgeSet().size());
 	}
 	
 	public List<PorzioneConnessa> trovaPorzioniConnesse(String partenza) {
@@ -48,9 +50,74 @@ public class Model {
 		Collections.sort(connessi);
 		
 		// console
-		System.out.print(connessi);
+		System.out.print(connessi + "\n");
 		
 		return connessi;
+	}
+	
+	/*
+	 * modifica gli attributi di classe 'camminoOttimo' e 'pesoCammino
+	 */
+	public void calcolaCammino(int N, String partenza) {
+		// inizializzo dati in uscita
+		this.camminoOttimo = new ArrayList<>();
+		this.pesoCammino = 0;
+		
+		// avvio la ricorsione
+		List<PorzioneConnessa> parziale = new ArrayList<>();
+		parziale.add(new PorzioneConnessa(partenza, 0));
+		this.ricerca(parziale, N);
+	}
+	
+	/*
+	 * il cuore della ricorsione
+	 */
+	private void ricerca(List<PorzioneConnessa> parziale, int N) {
+		if(parziale.size() == N) {
+			// soluzione parziale è anche totale
+			
+			if(this.calcolaPeso(parziale) > this.pesoCammino) {
+				
+				// aggiorno la soluzione ottima
+				this.pesoCammino = this.calcolaPeso(parziale);
+				this.camminoOttimo = new ArrayList<>(parziale);
+			}
+			return;
+		}
+		PorzioneConnessa ultimoInserito = parziale.get(parziale.size()-1);
+		for(DefaultWeightedEdge e : this.grafo.edgesOf(ultimoInserito.getTipoPorzione())) {
+			String tipoPorzione = Graphs.getOppositeVertex(this.grafo, e, ultimoInserito.getTipoPorzione());
+			int peso = (int)this.grafo.getEdgeWeight(e);
+			PorzioneConnessa passo = new PorzioneConnessa(tipoPorzione, peso);
+			
+			boolean trovato = false;
+			for(PorzioneConnessa p : parziale) {
+				if(p.getTipoPorzione().compareTo(tipoPorzione) == 0) {
+					trovato = true;
+				}
+			}
+			if(trovato == false) {
+				parziale.add(passo);
+				this.ricerca(parziale, N);
+				parziale.remove(parziale.size()-1);
+			}
+		}
+	}
+	
+	public List<PorzioneConnessa> getCammino() {
+		return this.camminoOttimo;
+	}
+	
+	public int getPesoCammino() {
+		return this.pesoCammino;
+	}
+	
+	private int calcolaPeso(List<PorzioneConnessa> parziale) {
+		int pesoTot = 0;
+		for(PorzioneConnessa p : parziale) {
+			pesoTot += p.getPeso();
+		}
+		return pesoTot;
 	}
 	
 	public int nVertici() {

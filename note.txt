@@ -1,0 +1,12 @@
+- if(size di parziale == N)
+	// soluzione parziale = totale
+	- if(peso di parziale > this.pesoCammino)	// metodo calcolaPeso
+		- this.pesoCammino = peso di parziale
+		- this.camminoOttimo = new list(parziale)
+	- return
+- definisco ultimo elemento inserito in parziale
+- per ogni vertice direttamente connesso all'ultimo inserito
+	- if(non contenuto in parziale)
+		- lo inserisco
+		- chiamo la ricorsione	// proseguo per questo ramo
+		- lo tolgo	// backtracking con remove(parziale.size()-1)
