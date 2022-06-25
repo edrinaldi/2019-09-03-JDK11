@@ -5,8 +5,10 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import it.polito.tdp.food.model.Model;
+import it.polito.tdp.food.model.PorzioneConnessa;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -40,7 +42,7 @@ public class FoodController {
     private Button btnCammino; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxPorzioni"
-    private ComboBox<?> boxPorzioni; // Value injected by FXMLLoader
+    private ComboBox<String> boxPorzioni; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -54,15 +56,55 @@ public class FoodController {
     @FXML
     void doCorrelate(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Cerco porzioni correlate...");
+    	
+    	// controllo grafo
+    	if(!this.model.isGrafoCreato()) {
+    		this.txtResult.setText("Errore: devi prima creare il grafo.");
+    		return;
+    	}
+    	
+    	// controllo partenza
+    	String partenza = this.boxPorzioni.getValue();
+    	if(partenza == null) {
+    		this.txtResult.setText("Errore: devi prima selezionare un tipo di porzione.");
+    		return;
+    	}
+    	
+    	// trovo le porzioni correlate
+    	List<PorzioneConnessa> correlate = this.model.trovaPorzioniConnesse(partenza);
+    	
+    	// stampo il risultato
+    	txtResult.setText(String.format("Porzioni correlate a %s:\n", partenza));
+    	for(PorzioneConnessa p : correlate) {
+    		this.txtResult.appendText(p.toString() + "\n");
+    	}
     	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Creazione grafo...");
     	
+    	// controllo le calorie
+    	int calorie = 0;
+    	try {
+    		calorie = Integer.parseInt(this.txtCalorie.getText());
+    	}
+    	catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		this.txtResult.setText("Errore: devi prima inserire un valore intero per le calorie.");
+    	}
+    	
+    	// creo il grafo
+    	this.model.creaGrafo(calorie);
+    	
+    	// stampo il risultato
+    	txtResult.setText(String.format("Creato grafo con %d vertici e %d archi", this.model.nVertici(), 
+    			this.model.nArchi()));
+    	
+    	// riempio la tendina
+    	this.boxPorzioni.getItems().clear();
+    	this.boxPorzioni.getItems().addAll(this.model.getVertici());
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

@@ -3,7 +3,7 @@ package it.polito.tdp.food.model;
 public class TestModel {
 	public static void main(String[] args) {
 		Model m = new Model();
-		m.creaGrafo(400);
-		m.trovaPorzioniConnesse("cup");
+		m.creaGrafo(100);
+		m.trovaPorzioniConnesse("bar");
 	}
 }

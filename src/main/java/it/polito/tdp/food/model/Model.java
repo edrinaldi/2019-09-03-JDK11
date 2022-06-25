@@ -1,6 +1,7 @@
 package it.polito.tdp.food.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jgrapht.Graph;
@@ -44,10 +45,29 @@ public class Model {
 			int peso = (int)this.grafo.getEdgeWeight(e);
 			connessi.add(new PorzioneConnessa(tipoPorzione, peso));
 		}
+		Collections.sort(connessi);
 		
 		// console
 		System.out.print(connessi);
 		
 		return connessi;
+	}
+	
+	public int nVertici() {
+		return this.grafo.vertexSet().size();
+	}
+	
+	public int nArchi() {
+		return this.grafo.edgeSet().size();
+	}
+	
+	public List<String> getVertici() {
+		List<String> vertici = new ArrayList<String>(this.grafo.vertexSet());
+		Collections.sort(vertici);
+		return vertici;
+	}
+	
+	public boolean isGrafoCreato() {
+		return this.grafo!=null;
 	}
 }

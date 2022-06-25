@@ -1,6 +1,6 @@
 package it.polito.tdp.food.model;
 
-public class PorzioneConnessa {
+public class PorzioneConnessa implements Comparable<PorzioneConnessa>{
 	private String tipoPorzione;
 	private int peso;
 	public PorzioneConnessa(String tipoPorzione, int peso) {
@@ -22,7 +22,12 @@ public class PorzioneConnessa {
 	}
 	@Override
 	public String toString() {
-		return "tipoPorzione=" + tipoPorzione + ", peso=" + peso;
+		return tipoPorzione + ", " + peso;
+	}
+	@Override
+	public int compareTo(PorzioneConnessa o) {
+		// TODO Auto-generated method stub
+		return this.tipoPorzione.compareTo(o.tipoPorzione);
 	}
 	
 }
