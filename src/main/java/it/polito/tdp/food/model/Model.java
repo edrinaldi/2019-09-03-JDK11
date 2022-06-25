@@ -73,7 +73,7 @@ public class Model {
 	 * il cuore della ricorsione
 	 */
 	private void ricerca(List<PorzioneConnessa> parziale, int N) {
-		if(parziale.size() == N) {
+		if(parziale.size() == N+1) {
 			// soluzione parziale è anche totale
 			
 			if(this.calcolaPeso(parziale) > this.pesoCammino) {

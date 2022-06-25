@@ -50,7 +50,39 @@ public class FoodController {
     @FXML
     void doCammino(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Cerco cammino peso massimo...");
+    	
+    	// controllo grafo
+    	if(!this.model.isGrafoCreato()) {
+    		this.txtResult.setText("Errore: devi prima creare il grafo.");
+    		return;
+    	}
+    	
+    	// controllo partenza
+    	String partenza = this.boxPorzioni.getValue();
+    	if(partenza == null) {
+    		this.txtResult.setText("Errore: devi prima selezionare un tipo di porzione.");
+    		return;
+    	}
+    	
+    	// controllo N
+    	int N = 0;
+    	try {
+    		N = Integer.parseInt(this.txtPassi.getText());
+    	}
+    	catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		this.txtResult.setText("Errore: devi prima inserire un valore intero per i passi.");
+    		return;
+    	}
+    	
+    	// calcolo il cammino
+    	this.model.calcolaCammino(N, partenza);
+    	
+    	// stampo il risultato
+    	txtResult.setText(String.format("Trovato un cammino di peso %d\n", this.model.getPesoCammino()));
+		for(PorzioneConnessa p : this.model.getCammino()) {
+			this.txtResult.appendText("- " + p.getTipoPorzione() + "\n");
+		}
     }
 
     @FXML
@@ -93,6 +125,7 @@ public class FoodController {
     	catch(NumberFormatException e) {
     		e.printStackTrace();
     		this.txtResult.setText("Errore: devi prima inserire un valore intero per le calorie.");
+    		return;
     	}
     	
     	// creo il grafo
